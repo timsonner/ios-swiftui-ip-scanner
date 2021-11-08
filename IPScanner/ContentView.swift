@@ -15,28 +15,34 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
+            Text(viewModel.hasError ? "has error" : "no error")
             TextField("Lower IP Range", text: $lowerRange)
             TextField("Upper IP Range", text: $upperRange)
-            Button("Foo!") {
+            Button("Scan") {
                 viewModel.explodeRangeofIPV4s(lowerBounds: lowerRange, upperBounds: upperRange)
-            }
-            List {
-                ForEach(viewModel.arrayOfIPV4s, id: \.self) {
-                    ip in
-                    Text("\(ip)")
+                // fire call to start scanning the array of ips
+                Task {
+                    await viewModel.scanRangeOfIPV4s(arrayToScan: viewModel.arrayOfIPV4sToScan)
                 }
             }
-            Text(viewModel.hasError ? "has error" : "no error")
-            Text("Scanning \(viewModel.currentURL)")
-            if viewModel.wasScanSuccessful {
-                Text("Site exists")
-            } else {
-                Text(viewModel.errorDescription)
+            List {
+                ForEach(viewModel.arrayOfScannedIPViewModel) {
+                    ip in
+                    Text("\(ip.IPV4address) OK")
+                }
             }
+            
         }
-        .task {
-            await viewModel.fetchAddress(url: viewModel.currentURL)
-        }
+//            Text("Scanning \(viewModel.currentURL)")
+//            if viewModel.wasScanSuccessful {
+//                Text("Site exists")
+//            } else {
+//                Text(viewModel.errorDescription)
+//            }
+//        }
+//        .task {
+//            await viewModel.fetchAddress(url: viewModel.currentURL)
+//        }
     }
     
 }

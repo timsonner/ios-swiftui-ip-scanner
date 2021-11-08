@@ -23,7 +23,8 @@ class ContentViewViewModel: ObservableObject {
     @Published var wasScanSuccessful: Bool = false
     @Published var errorDescription = ""
     @Published var currentURL = "https://8.8.8.8"
-    @Published var arrayOfIPV4s: [String] = []
+    @Published var arrayOfIPV4sToScan: [String] = []
+    @Published var arrayOfScannedIPViewModel: [ScannedIPViewModel] = []
     
     
     private let webService: WebService  // dependency injection
@@ -55,14 +56,15 @@ return section1 + "." + section2 + "." + section3 + "." + section4
         for ip in stride(from:convertIPV4ToInteger(IPV4Address: lowerBounds), through: convertIPV4ToInteger(IPV4Address: upperBounds), by: 1) {
             arrayOfIPV4s.append(convertIntegerToIPV4(int: ip))
         }
-        self.arrayOfIPV4s = arrayOfIPV4s
+        self.arrayOfIPV4sToScan = arrayOfIPV4s
     }
     
     func fetchAddress(url: String) async {
         do {
             let addressToScan = try await webService.networkRequest(url: url)
             if let scannedAddress = addressToScan {
-                self.wasScanSuccessful = scannedAddress
+//                self.wasScanSuccessful = scannedAddress
+                self.arrayOfScannedIPViewModel.append(scannedAddress)
             }
         } catch {
             self.errorDescription = returnError(error: error)
@@ -74,10 +76,18 @@ return section1 + "." + section2 + "." + section3 + "." + section4
         return error.localizedDescription
     }
     
+    func scanRangeOfIPV4s(arrayToScan: [String]) async {
+        for i in arrayOfIPV4sToScan {
+            await fetchAddress(url: i)
+        }
+    }
+    
     struct ScannedIPViewModel: Identifiable {
         
         var id = UUID()
-        
+        var IPV4address: String
+//        var statusCodeReturned: Int
+        var wasSuccessful: Bool
     }
     
     
