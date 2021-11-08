@@ -48,7 +48,7 @@ class ContentViewViewModel: ObservableObject {
         let section2 = String((int >> 16) & 0xFF)
         let section3 = String((int >> 8) & 0xFF)
         let section4 = String((int >> 0) & 0xFF)
-return section1 + "." + section2 + "." + section3 + "." + section4
+return "https://" + section1 + "." + section2 + "." + section3 + "." + section4
     }
     
     func explodeRangeofIPV4s(lowerBounds: String, upperBounds: String) {
