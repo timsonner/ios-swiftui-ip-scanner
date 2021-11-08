@@ -39,8 +39,6 @@
 		2B9E52C8273613A900207D5E = {
 			isa = PBXGroup;
 			children = (
-				2B9E52E4273624D600207D5E /* ViewModel.swift */,
-				2B9E52E22736165A00207D5E /* WebService.swift */,
 				2B9E52D3273613AA00207D5E /* IPScanner */,
 				2B9E52D2273613AA00207D5E /* Products */,
 			);
@@ -58,6 +56,8 @@
 			isa = PBXGroup;
 			children = (
 				2B9E52D4273613AA00207D5E /* IPScannerApp.swift */,
+				2B9E52E4273624D600207D5E /* ViewModel.swift */,
+				2B9E52E22736165A00207D5E /* WebService.swift */,
 				2B9E52D6273613AA00207D5E /* ContentView.swift */,
 				2B9E52D8273613AF00207D5E /* Assets.xcassets */,
 				2B9E52DA273613AF00207D5E /* Preview Content */,
