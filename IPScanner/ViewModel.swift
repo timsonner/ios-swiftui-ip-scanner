@@ -10,33 +10,28 @@ import Foundation
 @MainActor
 class ContentViewViewModel: ObservableObject {
     
-//    enum State {
-//        case initialState
-//        case loading
-//        case successScanningIP(data: Bool)
-//        case failed(error: Error)
-//    }
-    
-//    @Published private(set) var state: State = .initialState
-    // set means changes to this var can only be made from within scope of this class. views can't directly change this var, only reflect its change
     @Published var hasError: Bool = false
     @Published var wasScanSuccessful: Bool = false
     @Published var errorDescription = ""
-    @Published var currentURL = "https://8.8.8.8"
+    @Published var currentURL = ""
     @Published var arrayOfIPV4sToScan: [String] = []
     @Published var arrayOfScannedIPViewModel: [ScannedIPViewModel] = []
+    @Published var isScanning = false
+    @Published var arrayCounter = 0
     
     
-    private let webService: WebService  // dependency injection
+    private let webService: WebService
     
     init(webService: WebService) {
         self.webService = webService
     }
     
+    // add a string extension here that removes whitespaces from parameter before it is passed, or in explode ipv4 function, just sanitize strings before they get here otherwise, "Fatal error: Unexpectedly found nil while unwrapping an Optional value"
     func convertIPV4ToInteger(IPV4Address: String) -> Int {
         let octets: [Int] = IPV4Address.split(separator: ".").map({Int($0)!})
         var numValue: Int = 0
         for i in stride(from:3, through:0, by:-1) {
+            // if ipv4 address does not contain 4 sections, you end up here with "Fatal error: Index out of range"
             numValue += octets[3-i] << (i * 8)
         }
         return numValue
@@ -48,7 +43,7 @@ class ContentViewViewModel: ObservableObject {
         let section2 = String((int >> 16) & 0xFF)
         let section3 = String((int >> 8) & 0xFF)
         let section4 = String((int >> 0) & 0xFF)
-return "https://" + section1 + "." + section2 + "." + section3 + "." + section4
+        return "https://" + section1 + "." + section2 + "." + section3 + "." + section4
     }
     
     func explodeRangeofIPV4s(lowerBounds: String, upperBounds: String) {
@@ -59,17 +54,18 @@ return "https://" + section1 + "." + section2 + "." + section3 + "." + section4
         self.arrayOfIPV4sToScan = arrayOfIPV4s
     }
     
-    func fetchAddress(url: String) async {
+    func scanAddress(url: String) async {
+        self.isScanning = true
         do {
             let addressToScan = try await webService.networkRequest(url: url)
             if let scannedAddress = addressToScan {
-//                self.wasScanSuccessful = scannedAddress
                 self.arrayOfScannedIPViewModel.append(scannedAddress)
             }
         } catch {
             self.errorDescription = returnError(error: error)
             self.hasError = true
         }
+        self.isScanning = false
     }
     
     func returnError(error: Error) -> String {
@@ -77,17 +73,20 @@ return "https://" + section1 + "." + section2 + "." + section3 + "." + section4
     }
     
     func scanRangeOfIPV4s(arrayToScan: [String]) async {
-        for i in arrayOfIPV4sToScan {
-            await fetchAddress(url: i)
+        for address in arrayOfIPV4sToScan {
+            self.currentURL = address
+            self.arrayCounter += 1
+            await scanAddress(url: address)
         }
+        
     }
     
     struct ScannedIPViewModel: Identifiable {
         
         var id = UUID()
         var IPV4address: String
-//        var statusCodeReturned: Int
-        var wasSuccessful: Bool
+        var statusCodeReturned: Int
+        var data: String?
     }
     
     
