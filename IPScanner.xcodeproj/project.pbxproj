@@ -13,6 +13,11 @@
 		2B9E52DC273613AF00207D5E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2B9E52DB273613AF00207D5E /* Preview Assets.xcassets */; };
 		2B9E52E32736165A00207D5E /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9E52E22736165A00207D5E /* WebService.swift */; };
 		2B9E52E5273624D600207D5E /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9E52E4273624D600207D5E /* ViewModel.swift */; };
+		2B9E52E7273BA6C200207D5E /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9E52E6273BA6C200207D5E /* WebView.swift */; };
+		2B9E52E9273E0E3700207D5E /* DataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9E52E8273E0E3700207D5E /* DataView.swift */; };
+		2B9E52ED273F7C0A00207D5E /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 2B9E52EC273F7C0A00207D5E /* Collections */; };
+		2B9E52EF273F7C0A00207D5E /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = 2B9E52EE273F7C0A00207D5E /* DequeModule */; };
+		2B9E52F1273F7C0A00207D5E /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 2B9E52F0273F7C0A00207D5E /* OrderedCollections */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +28,9 @@
 		2B9E52DB273613AF00207D5E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2B9E52E22736165A00207D5E /* WebService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
 		2B9E52E4273624D600207D5E /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		2B9E52E6273BA6C200207D5E /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
+		2B9E52E8273E0E3700207D5E /* DataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataView.swift; sourceTree = "<group>"; };
+		2B9E52EA273F418F00207D5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -30,6 +38,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2B9E52ED273F7C0A00207D5E /* Collections in Frameworks */,
+				2B9E52EF273F7C0A00207D5E /* DequeModule in Frameworks */,
+				2B9E52F1273F7C0A00207D5E /* OrderedCollections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,12 +66,15 @@
 		2B9E52D3273613AA00207D5E /* IPScanner */ = {
 			isa = PBXGroup;
 			children = (
+				2B9E52EA273F418F00207D5E /* Info.plist */,
 				2B9E52D4273613AA00207D5E /* IPScannerApp.swift */,
 				2B9E52E4273624D600207D5E /* ViewModel.swift */,
 				2B9E52E22736165A00207D5E /* WebService.swift */,
 				2B9E52D6273613AA00207D5E /* ContentView.swift */,
 				2B9E52D8273613AF00207D5E /* Assets.xcassets */,
 				2B9E52DA273613AF00207D5E /* Preview Content */,
+				2B9E52E6273BA6C200207D5E /* WebView.swift */,
+				2B9E52E8273E0E3700207D5E /* DataView.swift */,
 			);
 			path = IPScanner;
 			sourceTree = "<group>";
@@ -89,6 +103,11 @@
 			dependencies = (
 			);
 			name = IPScanner;
+			packageProductDependencies = (
+				2B9E52EC273F7C0A00207D5E /* Collections */,
+				2B9E52EE273F7C0A00207D5E /* DequeModule */,
+				2B9E52F0273F7C0A00207D5E /* OrderedCollections */,
+			);
 			productName = IPScanner;
 			productReference = 2B9E52D1273613AA00207D5E /* IPScanner.app */;
 			productType = "com.apple.product-type.application";
@@ -117,6 +136,9 @@
 				Base,
 			);
 			mainGroup = 2B9E52C8273613A900207D5E;
+			packageReferences = (
+				2B9E52EB273F7C0A00207D5E /* XCRemoteSwiftPackageReference "swift-collections" */,
+			);
 			productRefGroup = 2B9E52D2273613AA00207D5E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -144,9 +166,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B9E52E32736165A00207D5E /* WebService.swift in Sources */,
+				2B9E52E7273BA6C200207D5E /* WebView.swift in Sources */,
 				2B9E52D7273613AA00207D5E /* ContentView.swift in Sources */,
 				2B9E52E5273624D600207D5E /* ViewModel.swift in Sources */,
 				2B9E52D5273613AA00207D5E /* IPScannerApp.swift in Sources */,
+				2B9E52E9273E0E3700207D5E /* DataView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,6 +304,7 @@
 				DEVELOPMENT_TEAM = MUV3A7R788;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IPScanner/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -309,6 +334,7 @@
 				DEVELOPMENT_TEAM = MUV3A7R788;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IPScanner/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -349,6 +375,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2B9E52EB273F7C0A00207D5E /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2B9E52EC273F7C0A00207D5E /* Collections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2B9E52EB273F7C0A00207D5E /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = Collections;
+		};
+		2B9E52EE273F7C0A00207D5E /* DequeModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2B9E52EB273F7C0A00207D5E /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = DequeModule;
+		};
+		2B9E52F0273F7C0A00207D5E /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2B9E52EB273F7C0A00207D5E /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2B9E52C9273613A900207D5E /* Project object */;
 }

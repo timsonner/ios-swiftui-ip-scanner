@@ -52,8 +52,10 @@ struct ContentView: View {
                     
                     ForEach(viewModel.arrayOfScannedIPViewModel) {
                         ip in
+//                        NavigationLink(destination:
+//                                        Text("\(ip.data!)")) {
                         NavigationLink(destination:
-                                        Text("\(ip.data!)")) {
+                                        DataView(httpHeaders: ip.httpHeaders, htmlString: ip.htmlString!)) {
                             HStack {
                                 Text("\(ip.IPV4address)")
                                 Text("\(ip.statusCodeReturned)")
