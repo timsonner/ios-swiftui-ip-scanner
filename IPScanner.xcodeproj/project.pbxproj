@@ -18,6 +18,8 @@
 		2B9E52ED273F7C0A00207D5E /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 2B9E52EC273F7C0A00207D5E /* Collections */; };
 		2B9E52EF273F7C0A00207D5E /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = 2B9E52EE273F7C0A00207D5E /* DequeModule */; };
 		2B9E52F1273F7C0A00207D5E /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 2B9E52F0273F7C0A00207D5E /* OrderedCollections */; };
+		2B9E52F3274040FF00207D5E /* TrustAllSslCertificatesSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9E52F2274040FF00207D5E /* TrustAllSslCertificatesSessionDelegate.swift */; };
+		2B9E52F52741B31E00207D5E /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9E52F42741B31E00207D5E /* Model.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +33,8 @@
 		2B9E52E6273BA6C200207D5E /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		2B9E52E8273E0E3700207D5E /* DataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataView.swift; sourceTree = "<group>"; };
 		2B9E52EA273F418F00207D5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		2B9E52F2274040FF00207D5E /* TrustAllSslCertificatesSessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustAllSslCertificatesSessionDelegate.swift; sourceTree = "<group>"; };
+		2B9E52F42741B31E00207D5E /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +79,8 @@
 				2B9E52DA273613AF00207D5E /* Preview Content */,
 				2B9E52E6273BA6C200207D5E /* WebView.swift */,
 				2B9E52E8273E0E3700207D5E /* DataView.swift */,
+				2B9E52F2274040FF00207D5E /* TrustAllSslCertificatesSessionDelegate.swift */,
+				2B9E52F42741B31E00207D5E /* Model.swift */,
 			);
 			path = IPScanner;
 			sourceTree = "<group>";
@@ -166,11 +172,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B9E52E32736165A00207D5E /* WebService.swift in Sources */,
+				2B9E52F3274040FF00207D5E /* TrustAllSslCertificatesSessionDelegate.swift in Sources */,
 				2B9E52E7273BA6C200207D5E /* WebView.swift in Sources */,
 				2B9E52D7273613AA00207D5E /* ContentView.swift in Sources */,
 				2B9E52E5273624D600207D5E /* ViewModel.swift in Sources */,
 				2B9E52D5273613AA00207D5E /* IPScannerApp.swift in Sources */,
 				2B9E52E9273E0E3700207D5E /* DataView.swift in Sources */,
+				2B9E52F52741B31E00207D5E /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -37,20 +37,20 @@ class ContentViewViewModel: ObservableObject {
         }
         return integer
     }
-    func convertIntegerToIPV4(intteger: Int) -> String {
+    func convertIntegerToIPV4(integer: Int) -> String {
         // int >> 24 performs a bitwise shift 24 places to the right
         // & 0xFF is a bitwise AND, and 0xFF in hex is 255 in decimal
-        let section1 = String((intteger >> 24) & 0xFF)
-        let section2 = String((intteger >> 16) & 0xFF)
-        let section3 = String((intteger >> 8) & 0xFF)
-        let section4 = String((intteger >> 0) & 0xFF)
+        let section1 = String((integer >> 24) & 0xFF)
+        let section2 = String((integer >> 16) & 0xFF)
+        let section3 = String((integer >> 8) & 0xFF)
+        let section4 = String((integer >> 0) & 0xFF)
         return section1 + "." + section2 + "." + section3 + "." + section4
     }
     
     func explodeRangeofIPV4s(lowerBounds: String, upperBounds: String) {
         var arrayOfIPV4Addresses: [String] = []
         for ip in stride(from:convertIPV4ToInteger(stringOfIPV4Address: lowerBounds), through: convertIPV4ToInteger(stringOfIPV4Address: upperBounds), by: 1) {
-            arrayOfIPV4Addresses.append(convertIntegerToIPV4(intteger: ip))
+            arrayOfIPV4Addresses.append(convertIntegerToIPV4(integer: ip))
         }
         self.arrayOfIPV4sToScan = arrayOfIPV4Addresses
     }
@@ -58,10 +58,20 @@ class ContentViewViewModel: ObservableObject {
     func scanAddress(urlString: String) async {
         self.isScanning = true
         do {
-            let addressToScan = try await webService.networkRequest(url: urlString)
-
+//            let addressToScan = try await webService.networkRequest(url: urlString)
+            // this only works if the ip address is converted to a proper url. You can't pass an ip address here or it generates and ssl error. Possibly because the url on the ssl CA is a url and not an ip, thus you get a mismatch and it throws an ssl error.
+            let reverseDnsUrlString = try await webService.reverseDnsLookup(ipv4: urlString)
+            print("Inside scanAddress function, results from the DNSreverse: \(reverseDnsUrlString)")
+            if reverseDnsUrlString.answer[0].data != "nil" {
+            var trimmedString = reverseDnsUrlString.answer[0].data
+            trimmedString.removeLast()
+            print("About to scan \(trimmedString)")
+            let addressToScan = try await webService.getHttpHeadersandHtml(url: trimmedString)
             if let scannedAddress = addressToScan {
                 self.arrayOfScannedIPViewModel.append(scannedAddress)
+            }
+            } else {
+                print("Data returned from reverse dns was nil")
             }
         } catch {
             self.errorDescription = returnError(error: error)
@@ -89,5 +99,10 @@ class ContentViewViewModel: ObservableObject {
         var statusCodeReturned: Int
         var htmlString: String?
         var httpHeaders: OrderedDictionary<String, String>
+    }
+    
+    struct ReversedDnsIPViewModel: Identifiable {
+        var id = UUID()
+        var answer: [Answer]
     }
 }
