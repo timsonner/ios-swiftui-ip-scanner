@@ -7,16 +7,18 @@
 
 import Foundation
 import OrderedCollections
+import MapKit
 
 @MainActor
-class ContentViewViewModel: ObservableObject {
+class UriViewModel: ObservableObject {
     
     @Published var hasError: Bool = false
     @Published var wasScanSuccessful: Bool = false
     @Published var errorDescription = ""
     @Published var currentURL = ""
-    @Published var arrayOfIPV4sToScan: [String] = []
-    @Published var arrayOfScannedIPViewModel: [ScannedIPViewModel] = []
+    @Published var arrayOfAddressesToScan: [String] = []
+    @Published var arrayOfResponseSuccess: [ScannedIPViewModel] = []
+    @Published var arrayOfAddressesWithoutData: [ScannedIPViewModel] = []
     @Published var isScanning = false
     @Published var arrayCounter = 0
     
@@ -52,26 +54,37 @@ class ContentViewViewModel: ObservableObject {
         for ip in stride(from:convertIPV4ToInteger(stringOfIPV4Address: lowerBounds), through: convertIPV4ToInteger(stringOfIPV4Address: upperBounds), by: 1) {
             arrayOfIPV4Addresses.append(convertIntegerToIPV4(integer: ip))
         }
-        self.arrayOfIPV4sToScan = arrayOfIPV4Addresses
+        self.arrayOfAddressesToScan = arrayOfIPV4Addresses
     }
     
-    func scanAddress(urlString: String) async {
+    func scanAddress(ipv4Address: String) async {
         self.isScanning = true
         do {
-//            let addressToScan = try await webService.networkRequest(url: urlString)
+            //            let addressToScan = try await webService.networkRequest(url: urlString)
             // this only works if the ip address is converted to a proper url. You can't pass an ip address here or it generates and ssl error. Possibly because the url on the ssl CA is a url and not an ip, thus you get a mismatch and it throws an ssl error.
-            let reverseDnsUrlString = try await webService.reverseDnsLookup(ipv4: urlString)
-            print("Inside scanAddress function, results from the DNSreverse: \(reverseDnsUrlString)")
-            if reverseDnsUrlString.answer[0].data != "nil" {
-            var trimmedString = reverseDnsUrlString.answer[0].data
-            trimmedString.removeLast()
-            print("About to scan \(trimmedString)")
-            let addressToScan = try await webService.getHttpHeadersandHtml(url: trimmedString)
-            if let scannedAddress = addressToScan {
-                self.arrayOfScannedIPViewModel.append(scannedAddress)
-            }
+            
+            let reverseDnsLookup = try await webService.reverseDnsLookup(ipv4: ipv4Address)
+            
+            if reverseDnsLookup.hasAnswer {
+                print("scanAddress() -> Results from the reverse DNS lookup: \(String(describing: reverseDnsLookup.answer))")
+                
+                // add condition here to check if has data is true, if so, add to scanned ip view model, if false, add to ips that didn't have data array. set has data on viewmodel object.
+                var reverseDnsLookupAnswer = reverseDnsLookup.answer![0].data
+                // removes trailing "." from reverse dns answer
+                reverseDnsLookupAnswer.removeLast()
+                
+                let geoLocation = try await webService.getGeoLocationOfIP(ipv4Address: ipv4Address)
+                
+                print("scanAddress() -> Attempting to get HTTP Headers and HTML from \(reverseDnsLookupAnswer)")
+                let getHttpHeadersAndHtml = try await webService.getHttpHeadersandHtml(url: reverseDnsLookupAnswer, ipv4Address: ipv4Address, center: geoLocation.center, span: geoLocation.span) // add MKCoordinateRecion here
+                
+                if let scannedAddress = getHttpHeadersAndHtml {
+                    self.arrayOfResponseSuccess.append(scannedAddress)
+                    print("scanAddress() -> Added address to array")
+                }
+                
             } else {
-                print("Data returned from reverse dns was nil")
+                print("scanAddress() -> rDNS record does not exist")
             }
         } catch {
             self.errorDescription = returnError(error: error)
@@ -85,24 +98,29 @@ class ContentViewViewModel: ObservableObject {
     }
     
     func scanRangeOfIPV4s(arrayToScan: [String]) async {
-        for address in arrayOfIPV4sToScan {
+        for address in arrayOfAddressesToScan {
             self.currentURL = address
             self.arrayCounter += 1
-            await scanAddress(urlString: address)
+            await scanAddress(ipv4Address: address)
         }
     }
     
     struct ScannedIPViewModel: Identifiable {
-        
+        // i have no idea why, but if you have optionals declared here, it will break a ForEach List
         var id = UUID()
-        var IPV4address: String
+        // var hasData: Bool
+        var domainNameAddress: String
+        var ipv4Address: String
         var statusCodeReturned: Int
-        var htmlString: String?
-        var httpHeaders: OrderedDictionary<String, String>
+        var htmlString: String
+        var httpHeaders: OrderedDictionary<String, String>?
+        var center: CLLocationCoordinate2D
+        var span: MKCoordinateSpan
     }
     
     struct ReversedDnsIPViewModel: Identifiable {
         var id = UUID()
-        var answer: [Answer]
+        var hasAnswer: Bool
+        var answer: [Answer]?
     }
 }

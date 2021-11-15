@@ -13,12 +13,6 @@ import Foundation
 
 // MARK: - GoogleDnsResponseModel
 
-// Sample query: https://dns.google/resolve?name=8.8.8.8.in-addr.arpa&type=PTR
-// Note name is reversed and appended with ".in-addr.arpa"
-// Sample response: {"Status":0,"TC":false,"RD":true,"RA":true,"AD":false,"CD":false,"Question":[{"name":"8.8.8.8.in-addr.arpa.","type":12}],"Answer":[{"name":"8.8.8.8.in-addr.arpa.","type":12,"TTL":18532,"data":"dns.google."}]}
-// Note the trailing "." on the data object "dns.google."
-// "data" can be absent, so if GoogleDnsResponseModel.Answer[0].data != nil, proceed. just check data for nil.
-
 struct GoogleDnsResponseModel: Decodable {
 
 //    let status: Int
@@ -57,5 +51,17 @@ struct Answer: Decodable {
 //    let name: String
 //    let type: Int
 //}
+
+struct GeoLocation: Decodable {
+    let query, status, country, countryCode: String
+    let region, regionName, city, zip: String
+    let lat, lon: Double
+    let timezone, isp, org, purpleAs: String
+
+    enum CodingKeys: String, CodingKey {
+        case query, status, country, countryCode, region, regionName, city, zip, lat, lon, timezone, isp, org
+        case purpleAs = "as"
+    }
+}
 
 
