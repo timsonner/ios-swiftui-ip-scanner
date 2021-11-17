@@ -41,6 +41,7 @@ struct WebService: Decodable {
     }
     
     func reverseDnsLookup(ipv4: String) async throws -> UriViewModel.ReversedDnsIPViewModel {
+        
         // performs reverse dns lookup
         // example query: https://dns.google/resolve?name=4.3.2.1.in-addr.arpa&type=PTR
         let components = ipv4.components(separatedBy: ".").reversed()
@@ -52,10 +53,11 @@ struct WebService: Decodable {
         reversedIpv4.removeLast()
         // trim the last period off, you could leave this, but would need to modify the googleReversedDnsUrl
         print("=================================================================================")
+        print("reverseDnsLookup() -> IP is \(reversedIpv4)")
         print("reverseDnsLookup() -> Reversed IP is \(reversedIpv4)")
         
         let googleReversedDnsUrl = URL(string: "https://dns.google/resolve?name=\(reversedIpv4).in-addr.arpa&type=PTR")!
-        print("reverseDnsLookup() -> Requesting reverse DNS lookup from: \(googleReversedDnsUrl)")
+        print("reverseDnsLookup() -> Performing reverse DNS lookup from: \(googleReversedDnsUrl)")
         
         let (data, response) = try await URLSession.shared.data(from: googleReversedDnsUrl)
         
@@ -70,11 +72,11 @@ struct WebService: Decodable {
             //            throw WebServiceError.failedToDecodeData
             return UriViewModel.ReversedDnsIPViewModel(id: UUID(), hasAnswer: false)
         }
-        print("reverseDnsLookup() -> Successfully decoded data")
-        return UriViewModel.ReversedDnsIPViewModel(id: UUID(), hasAnswer: true, answer: decodedData.answer)
+        print("reverseDnsLookup() -> Successfully decoded data for \(ipv4)")
+        return UriViewModel.ReversedDnsIPViewModel(id: UUID(), hasAnswer: true, answer: decodedData.answer, ipv4: ipv4)
     }
     
-    func getHttpHeadersandHtml(url: String, ipv4Address: String, center: CLLocationCoordinate2D, span: MKCoordinateSpan) async throws -> UriViewModel.ScannedIPViewModel? {
+    func getHttpHeadersandHtml(url: String, ipv4: String, center: CLLocationCoordinate2D, span: MKCoordinateSpan) async throws -> UriViewModel.ScannedIPViewModel? {
         print("getHttpHeadersandHtml() -> Initializing...")
         var htmlString = ""
         
@@ -90,7 +92,7 @@ struct WebService: Decodable {
         
        // MARK: Retrieve response
         guard let (_, response) = try? await session.data(for: request) else {
-            return UriViewModel.ScannedIPViewModel(id: UUID(), domainNameAddress: "\(url)", ipv4Address: ipv4Address, statusCodeReturned: 408, htmlString: "", httpHeaders: falseHeaders, center: center, span: span)
+            return UriViewModel.ScannedIPViewModel(id: UUID(), domainNameAddress: "\(url)", ipv4Address: ipv4, statusCodeReturned: 408, htmlString: "", httpHeaders: falseHeaders, center: center, span: span)
         }
         
         print("getHttpHeadersandHtml() -> Retrieving response...")
@@ -99,13 +101,13 @@ struct WebService: Decodable {
             print("getHttpHeadersandHtml() -> Failed to retrieve response")
             let httpResponse = response as? HTTPURLResponse
             
-            return UriViewModel.ScannedIPViewModel(id: UUID(), domainNameAddress: url, ipv4Address: ipv4Address, statusCodeReturned: httpResponse!.statusCode, htmlString: "", httpHeaders: falseHeaders, center: center, span: span)
+            return UriViewModel.ScannedIPViewModel(id: UUID(), domainNameAddress: url, ipv4Address: ipv4, statusCodeReturned: httpResponse!.statusCode, htmlString: "", httpHeaders: falseHeaders, center: center, span: span)
         }
         // MARK: Retrieve data
         guard let (data, _) = try? await session.data(from: (URL(string: "https://\(url)"))!) else {
             
             print("getHttpHeadersandHtml() -> Failed to retrieve data")
-            return UriViewModel.ScannedIPViewModel(id: UUID(), domainNameAddress: url, ipv4Address: ipv4Address, statusCodeReturned: httpResponse.statusCode, htmlString: "", httpHeaders: falseHeaders, center: center, span: span)
+            return UriViewModel.ScannedIPViewModel(id: UUID(), domainNameAddress: url, ipv4Address: ipv4, statusCodeReturned: httpResponse.statusCode, htmlString: "", httpHeaders: falseHeaders, center: center, span: span)
         }
         // MARK: Convert headers to ordered dictionary
         let httpHeaders = httpResponse.allHeaderFields as? [String: String]
@@ -123,7 +125,7 @@ struct WebService: Decodable {
         //               }
         
         //        return ContentViewViewModel.ScannedIPViewModel(id: UUID(), IPV4address: url, statusCodeReturned: httpResponse.statusCode, data: httpResponse.mimeType == "text/html" ? String(data: data, encoding: .utf8) : "No Data to display")
-        return UriViewModel.ScannedIPViewModel(id: UUID(), domainNameAddress: url, ipv4Address: ipv4Address, statusCodeReturned: httpResponse.statusCode, htmlString: htmlString, httpHeaders: dictionaryOfHeaders, center: center, span: span)
+        return UriViewModel.ScannedIPViewModel(id: UUID(), domainNameAddress: url, ipv4Address: ipv4, statusCodeReturned: httpResponse.statusCode, htmlString: htmlString, httpHeaders: dictionaryOfHeaders, center: center, span: span)
         
     }
     

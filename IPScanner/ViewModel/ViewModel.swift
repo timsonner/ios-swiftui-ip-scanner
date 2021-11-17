@@ -67,22 +67,36 @@ class UriViewModel: ObservableObject {
             
             if reverseDnsLookup.hasAnswer {
                 print("scanAddress() -> Results from the reverse DNS lookup: \(String(describing: reverseDnsLookup.answer))")
+               
+                    print ("scanAddress() -> Reverse DNS lookup result has \(reverseDnsLookup.answer!.count) entries")
+                for entry in reverseDnsLookup.answer! {
                 
                 // add condition here to check if has data is true, if so, add to scanned ip view model, if false, add to ips that didn't have data array. set has data on viewmodel object.
-                var reverseDnsLookupAnswer = reverseDnsLookup.answer![0].data
+                    var rDnsString = entry.data
                 // removes trailing "." from reverse dns answer
-                reverseDnsLookupAnswer.removeLast()
+                rDnsString.removeLast()
+                    //0.144.253.17.in-addr.arpa.
+                    var entryIp = entry.name
+                    var rDnsReplaced = entryIp.replacingOccurrences(of: ".in-addr.arpa.", with: "")
+                    let components = rDnsReplaced.components(separatedBy: ".").reversed()
+                    var rDnsConvertedToUrl = ""
+                    for i in components {
+                        rDnsConvertedToUrl += i + "."
+                    }
+                    rDnsConvertedToUrl.removeLast()
+                    print("scanAddress() -> Converted \(rDnsString) to \(rDnsConvertedToUrl)")
+                    
+
+                    let geoLocation = try await webService.getGeoLocationOfIP(ipv4Address: rDnsString)
                 
-                let geoLocation = try await webService.getGeoLocationOfIP(ipv4Address: ipv4Address)
-                
-                print("scanAddress() -> Attempting to get HTTP Headers and HTML from \(reverseDnsLookupAnswer)")
-                let getHttpHeadersAndHtml = try await webService.getHttpHeadersandHtml(url: reverseDnsLookupAnswer, ipv4Address: ipv4Address, center: geoLocation.center, span: geoLocation.span) // add MKCoordinateRecion here
+                print("scanAddress() -> Attempting to get HTTP Headers and HTML from \(rDnsString)")
+                    let getHttpHeadersAndHtml = try await webService.getHttpHeadersandHtml(url: rDnsString, ipv4: rDnsConvertedToUrl, center: geoLocation.center, span: geoLocation.span) // add MKCoordinateRecion here
                 
                 if let scannedAddress = getHttpHeadersAndHtml {
                     self.arrayOfResponseSuccess.append(scannedAddress)
                     print("scanAddress() -> Added address to array")
                 }
-                
+                 }
             } else {
                 print("scanAddress() -> rDNS record does not exist")
             }
@@ -92,6 +106,9 @@ class UriViewModel: ObservableObject {
         }
         self.isScanning = false
     }
+    
+    
+    
     
     func returnError(error: Error) -> String {
         return error.localizedDescription
@@ -122,5 +139,6 @@ class UriViewModel: ObservableObject {
         var id = UUID()
         var hasAnswer: Bool
         var answer: [Answer]?
+        var ipv4: String?
     }
 }

@@ -35,12 +35,13 @@ struct GoogleDnsResponseModel: Decodable {
 
 // MARK: - Answer
 struct Answer: Decodable {
-//    let name: String
+    let name: String
 //    let type, ttl: Int
     let data: String
 
     enum CodingKeys: String, CodingKey {
-//        case name, type
+        case name
+//        case type
 //        case ttl = "TTL"
         case data
     }
